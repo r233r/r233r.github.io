@@ -1,96 +1,53 @@
-var abrv = 2500;
-var time;
-var stopped = false;
-var timer;
+ // var n=0;
+    var btnStart=document.getElementById("btnStart");
+    var btnPause=document.getElementById("btnPause");
+    var btnCancel=document.getElementById("btnCancel");
+    var min=document.querySelectorAll("input")[0];
+    var is_cal=false;
+    // console.log(min-1);
+    var sec=document.querySelectorAll("input")[1];
+    var timer;
+    btnStart.onclick=count;
+    btnPause.onclick=pause;
+    btnCancel.onclick=Cancel;
 
-function convert() {
-    var temp = "" + abrv;
-    if (temp[2] === '0' && temp[3] === '0') {
-        time = temp[0] + temp[1];
-    } else if (abrv < 1000) {
-        time = temp[0];
+    var box=document.getElementsByTagName("div")[0];
+    var audio= new Audio("E:/CloudMusic/童话镇.mp3");
+    function count(){
+        is_cal=true;   
     }
-}
-
-function down() {
-    if (parseInt(abrv) > 100) {
-        abrv = parseInt(abrv) - 100;
+    function pause(){
+        is_cal=false;
     }
-    convert();
-    $('#time').html(time);
-    stopped = false;
-}
 
-function up() {
-    if (parseInt(time) < 60) {
-        abrv = parseInt(abrv) + 100;
+    function Cancel(){
+        is_cal=false;
+        min.value=25;
+        sec.value=0;
+        audio.pause();
     }
-    convert();
-    $('#time').html(time);
-    stopped = false;
-}
 
-$(document).ready(function() {
-    convert();
-    $('#time').html(time);
-});
+    timer=setInterval(function(){
+        // alert("ddd");
+        if(is_cal){
+            if(sec.value>=1 && min.value>=0){
+                sec.value--
 
-function start() {
-    if (stopped === false) {
-        seconds = parseInt(time) * 60;
-    }
-    stopped = false;
-    $('#start').html('Stop');
-    document.getElementById('down').setAttribute('onclick', '');
-    document.getElementById('up').setAttribute('onclick', '');
-    document.getElementById('start').setAttribute('onclick', 'stop()');
-
-    timer = setTimeout(countDown, 1000);
-
-    function countDown() {
-        if (seconds > 0) {
-            seconds--;
+            }
+            else if(min.value>0){
+                sec.value=59;
+                min.value--
+            }
+            else{
+                is_cal=false;
+                sec.value=min.value=0;
+                audio.play();
+            }
+            
+        }else{
+            min.value=min.value;
         }
-        if (seconds > 0 && stopped === false) {
-            timer = setTimeout(countDown, 1000);
-        }
-        if (stopped === false && seconds % 60 >= 10) {
-            $('#time').html(Math.floor(seconds / 60) + ':' + seconds % 60);
-        } else if (seconds % 60 < 10 && seconds % 60 >= 0 && seconds / 60 !== 0) {
-            $('#time').html(Math.floor(seconds / 60) + ':0' + seconds % 60);
-        } else if (seconds / 60 === 0) {
-            $('#time').html('DONE');
-            alert("Timer is done!");
-        }
-    }
-}
 
-function stop() {
-    clearTimeout(timer);
-    stopped = true;
-    $('#start').html('Start');
-    document.getElementById('down').setAttribute('onclick', 'down()');
-    document.getElementById('up').setAttribute('onclick', 'up()');
-    document.getElementById('start').setAttribute('onclick', 'start()');
-    if (seconds % 60 >= 10) {
-        $('#time').html(Math.floor(seconds / 60) + ':' + seconds % 60);
-    } else {
-        $('#time').html(Math.floor(seconds / 60) + ':0' + seconds % 60);
-    }
-}
+    },1000);
 
-function reset() {
-    if (stopped === false) {
-        clearTimeout(timer);
-        document.getElementById('down').setAttribute('onclick', 'down()');
-        document.getElementById('up').setAttribute('onclick', 'up()');
-        document.getElementById('start').setAttribute('onclick', 'start()');
-        $('#start').html('Start');
-        stopped = true;
-    }
-
-    seconds = 1500;
-    abrv = 2500;
-    time = '25';
-    $('#time').html(time);
-}
+  
